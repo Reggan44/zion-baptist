@@ -1,3 +1,5 @@
+import { getBooksFromDB, saveBooksToDB, getChapterFromDB } from './offlineBible';
+
 const BASE_URL = 'https://bolls.life';
 
 export interface BibleBook {
@@ -87,12 +89,35 @@ export const BIBLE_BOOK_MAP: Record<number, { en: string; sw: string }> = {
 };
 
 export const getBibleBooks = async (translation: string): Promise<BibleBook[]> => {
+  try {
+    const localBooks = await getBooksFromDB(translation);
+    if (localBooks && localBooks.length > 0) {
+      return localBooks;
+    }
+  } catch (error) {
+    console.error('Failed to get books from IDB:', error);
+  }
+
   const response = await fetch(`${BASE_URL}/get-books/${translation}/`);
   if (!response.ok) throw new Error('Failed to fetch books');
-  return response.json();
+  const books = await response.json();
+
+  // Cache the fetched books in IDB
+  await saveBooksToDB(translation, books).catch(console.error);
+
+  return books;
 };
 
 export const getBibleChapter = async (translation: string, bookId: number, chapter: number): Promise<BibleVerse[]> => {
+  try {
+    const localChapter = await getChapterFromDB(translation, bookId, chapter);
+    if (localChapter && localChapter.length > 0) {
+      return localChapter;
+    }
+  } catch (error) {
+    console.error('Failed to get chapter from IDB:', error);
+  }
+
   const response = await fetch(`${BASE_URL}/get-text/${translation}/${bookId}/${chapter}/`);
   if (!response.ok) throw new Error('Failed to fetch chapter');
   return response.json();

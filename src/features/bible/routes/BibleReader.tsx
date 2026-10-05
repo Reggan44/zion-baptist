@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Book, ChevronRight, ChevronLeft, Languages, Star, Download, ChevronDown, ListCheck, Loader2 } from 'lucide-react';
 import { Button } from '../../../components/elements/Button';
 import { getBibleBooks, getBibleChapter, BIBLE_VERSIONS, BibleBook, BibleVerse, BIBLE_BOOK_MAP } from '../api/bible';
+import { downloadFullTranslation } from '../api/offlineBible';
 import SEO from '../../../components/seo/SEO';
 
 const BibleReader = () => {
@@ -25,6 +26,10 @@ const BibleReader = () => {
       }
     };
     loadBooks();
+
+    // Initiate background downloads for offline access
+    downloadFullTranslation(BIBLE_VERSIONS.ENGLISH).catch(console.error);
+    downloadFullTranslation(BIBLE_VERSIONS.SWAHILI).catch(console.error);
   }, []);
 
   const loadChapter = useCallback(async (book: BibleBook, chapter: number) => {
