@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Zion Road Independent Baptist Church - Official Brochure Palette */
+    --background: 38 25% 98%;      /* Warm Ivory #FAF8F5 */
+    --foreground: 215 25% 17%;    /* Charcoal Slate #1E293B */
+    
+    --primary: 354 70% 45%;       /* Zion Crimson Red #C52228 */
+    --primary-foreground: 0 0% 100%; /* Pure White */
+    
+    --secondary: 40 50% 92%;      /* Warm Sand/Parchment #F8F2E4 */
+    --secondary-foreground: 354 70% 35%; /* Deep Crimson Text */
+    
+    --accent: 215 45% 20%;        /* Zion Royal Navy #1B2A3A */
+    --accent-foreground: 0 0% 100%;
+    
+    --muted-gold: 38 75% 52%;     /* Zion Golden Amber #DA9D2E */
+    
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 17%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 17%;
+    
+    --muted: 40 30% 93%;
+    --muted-foreground: 215 15% 45%;
+    
+    --destructive: 354 70% 45%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 40 20% 88%;
+    --input: 40 20% 88%;
+    --ring: 354 70% 45%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 215 45% 12%;
+    --foreground: 210 20% 98%;
+    --card: 215 45% 15%;
+    --card-foreground: 210 20% 98%;
+    --popover: 215 45% 15%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 354 75% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 30% 20%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 30% 20%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 38 75% 52%;
+    --accent-foreground: 215 45% 12%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 30% 22%;
+    --input: 215 30% 22%;
+    --ring: 354 75% 55%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--secondary));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
+
+/* Base transitions */
+button, a {
+  transition: all 0.2s ease;
+}

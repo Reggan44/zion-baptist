@@ -1,0 +1,16 @@
+src/components/Footer.tsx(2,31): error TS2305: Module '"lucide-react"' has no exported member 'Facebook'.
+src/components/Footer.tsx(2,41): error TS2305: Module '"lucide-react"' has no exported member 'Youtube'.
+src/components/Footer.tsx(2,50): error TS2305: Module '"lucide-react"' has no exported member 'Instagram'.
+src/pages/Admin.tsx(2,1): error TS6133: 'motion' is declared but its value is never read.
+src/pages/Admin.tsx(5,10): error TS1484: 'Sermon' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/Admin.tsx(5,18): error TS1484: 'EventItem' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/Events.tsx(4,10): error TS1484: 'EventItem' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/Ministries.tsx(4,10): error TS1484: 'Ministry' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/Sermons.tsx(4,10): error TS1484: 'Sermon' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/services/events.ts(3,10): error TS1484: 'EventItem' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/services/ministries.ts(1,31): error TS6133: 'addDoc' is declared but its value is never read.
+src/services/ministries.ts(1,39): error TS6133: 'updateDoc' is declared but its value is never read.
+src/services/ministries.ts(1,50): error TS6133: 'deleteDoc' is declared but its value is never read.
+src/services/ministries.ts(1,61): error TS6133: 'doc' is declared but its value is never read.
+src/services/ministries.ts(3,10): error TS1484: 'Ministry' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/services/sermons.ts(3,10): error TS1484: 'Sermon' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.

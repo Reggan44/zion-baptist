@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Keep admin and login pages out of search results
+Disallow: /admin
+Disallow: /login
+
+# Avoid indexing static assets
+Disallow: /firebase-messaging-sw.js
+
+Sitemap: https://aichappyvalley.org/sitemap.xml
