@@ -1,9 +1,10 @@
+import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useSermons } from '../../../hooks/useSermons';
 import { Button } from '../../../components/elements/Button';
 import { Play, Calendar, ChevronRight, AlertCircle } from 'lucide-react';
-import { cn } from '../../../utils';
+
 import { useState } from 'react';
 import SEO from '../../../components/seo/SEO';
 
