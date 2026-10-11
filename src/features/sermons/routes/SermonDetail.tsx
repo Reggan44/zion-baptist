@@ -5,24 +5,8 @@ import { getSermonById, getSermons } from '../api/getSermons';
 import type { Sermon } from '../../../types';
 import { Calendar, ChevronLeft, Play, AlertCircle, Share2, Library, ArrowRight } from 'lucide-react';
 import { Button } from '../../../components/elements/Button';
-import { cn } from '../../../utils';
+import { cn, getYouTubeEmbedUrl } from '../../../utils';
 import SEO from '../../../components/seo/SEO';
-
-const getYouTubeEmbedUrl = (url: string) => {
-  if (!url) return '';
-  if (url.includes('embed/')) return url;
-  
-  let id = '';
-  if (url.includes('v=')) {
-    id = url.split('v=')[1].split('&')[0];
-  } else if (url.includes('youtu.be/')) {
-    id = url.split('youtu.be/')[1].split('?')[0];
-  } else if (url.includes('shorts/')) {
-    id = url.split('shorts/')[1].split('?')[0];
-  }
-  
-  return id ? `https://www.youtube-nocookie.com/embed/${id}` : url;
-};
 
 const SermonDetail = () => {
   const { id } = useParams<{ id: string }>();
