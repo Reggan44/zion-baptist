@@ -4,7 +4,7 @@ import { useSermons } from '../../../hooks/useSermons';
 import { Button } from '../../../components/elements/Button';
 import { Play, Calendar, ChevronRight, AlertCircle } from 'lucide-react';
 import { cn } from '../../../utils';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import SEO from '../../../components/seo/SEO';
 
 const SERMONS_SCHEMA = {
@@ -44,7 +44,9 @@ const Sermons = () => {
   const { sermons, loading, error } = useSermons(24);
   const [activeCategory, setActiveCategory] = useState<string>('All');
 
-  const categories = ['All', ...Array.from(new Set(sermons.map(s => s.category || 'Service')))];
+  const categories = useMemo(() => {
+    return ['All', ...Array.from(new Set(sermons.map(s => s.category || 'Service')))];
+  }, [sermons]);
 
 
   return (
