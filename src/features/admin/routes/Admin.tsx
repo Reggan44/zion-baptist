@@ -19,6 +19,11 @@ import {
 import { Button } from '../../../components/elements/Button';
 import { Input } from '../../../components/elements/Input';
 import { Label } from '../../../components/elements/Label';
+import { SermonForm } from '../components/SermonForm';
+import { EventForm } from '../components/EventForm';
+import { NotificationForm } from '../components/NotificationForm';
+import { MinistryForm } from '../components/MinistryForm';
+import { LeaderForm } from '../components/LeaderForm';
 import { cn } from '../../../utils';
 import {
   isNonEmpty, isValidUrl, isWithinMaxLength, sanitizeText
@@ -515,248 +520,58 @@ const Admin = () => {
 
             {/* Sermons Form */}
             {activeTab === 'sermons' && (
-              <form onSubmit={(e) => handleSubmit('sermons', e)} className="space-y-4" noValidate>
-                <div className="space-y-1.5">
-                  <Label htmlFor="s-title" className="text-xs font-medium">Title <span className="text-red-500">*</span></Label>
-                  <Input id="s-title" required maxLength={200} value={sermonData.title} onChange={e => setSermonData({...sermonData, title: e.target.value})} className="h-10" />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="s-date" className="text-xs font-medium">Date <span className="text-red-500">*</span></Label>
-                    <Input id="s-date" required type="date" value={sermonData.date} onChange={e => setSermonData({...sermonData, date: e.target.value})} className="h-10" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="s-category" className="text-xs font-medium">Category</Label>
-                    <Input id="s-category" maxLength={100} value={sermonData.category} onChange={e => setSermonData({...sermonData, category: e.target.value})} className="h-10" placeholder="Sunday" />
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="s-url" className="text-xs font-medium">Video URL (https://) <span className="text-red-500">*</span></Label>
-                  <Input id="s-url" required type="url" placeholder="https://youtube.com/watch?v=" value={sermonData.videoUrl} onChange={e => setSermonData({...sermonData, videoUrl: e.target.value})} className="h-10" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="s-desc" className="text-xs font-medium">Description</Label>
-                  <textarea id="s-desc" rows={3} maxLength={2000} value={sermonData.description} onChange={e => setSermonData({...sermonData, description: e.target.value})} className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none" />
-                </div>
-                <Button type="submit" disabled={submitting} className={cn("w-full h-10 font-semibold rounded-xl", editingId && "bg-blue-500 hover:bg-blue-600")}>
-                  {submitting ? <Loader2 size={16} className="animate-spin" aria-hidden="true" /> : (editingId ? 'Update' : 'Create')}
-                </Button>
-              </form>
+              <SermonForm
+                sermonData={sermonData}
+                setSermonData={setSermonData}
+                onSubmit={(e) => handleSubmit('sermons', e)}
+                submitting={submitting}
+                editingId={editingId}
+              />
             )}
 
             {/* Events Form */}
             {activeTab === 'events' && (
-              <form onSubmit={(e) => handleSubmit('events', e)} className="space-y-4" noValidate>
-                <div className="space-y-1.5">
-                  <Label htmlFor="e-title" className="text-xs font-medium">Title <span className="text-red-500">*</span></Label>
-                  <Input id="e-title" required maxLength={200} value={eventData.title} onChange={e => setEventData({...eventData, title: e.target.value})} className="h-10" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="e-date" className="text-xs font-medium">Date & Time <span className="text-red-500">*</span></Label>
-                  <Input id="e-date" required type="datetime-local" value={eventData.date} onChange={e => setEventData({...eventData, date: e.target.value})} className="h-10" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="e-location" className="text-xs font-medium flex items-center gap-1">
-                    <MapPin size={12} aria-hidden="true" /> Location <span className="text-red-500">*</span>
-                  </Label>
-                  <Input id="e-location" required maxLength={500} value={eventData.location} onChange={e => setEventData({...eventData, location: e.target.value})} className="h-10" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="e-desc" className="text-xs font-medium">Description</Label>
-                  <textarea id="e-desc" rows={3} maxLength={2000} value={eventData.description} onChange={e => setEventData({...eventData, description: e.target.value})} className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none" />
-                </div>
-                <Button type="submit" disabled={submitting} className={cn("w-full h-10 font-semibold rounded-xl", editingId && "bg-blue-500 hover:bg-blue-600")}>
-                  {submitting ? <Loader2 size={16} className="animate-spin" aria-hidden="true" /> : (editingId ? 'Update' : 'Create')}
-                </Button>
-              </form>
+              <EventForm
+                eventData={eventData}
+                setEventData={setEventData}
+                onSubmit={(e) => handleSubmit('events', e)}
+                submitting={submitting}
+                editingId={editingId}
+              />
             )}
 
             {/* Notifications Form */}
             {activeTab === 'notifications' && (
-              <form onSubmit={(e) => handleSubmit('notifications', e)} className="space-y-4" noValidate>
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
-                  <div className="flex gap-3">
-                    <Bell className="text-amber-600 shrink-0" size={18} />
-                    <p className="text-[11px] text-amber-800 leading-relaxed font-medium">
-                      Broadcast messages are sent to all users who have subscribed to notifications via the website or app.
-                    </p>
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="n-title" className="text-xs font-medium">Title <span className="text-red-500">*</span></Label>
-                  <Input id="n-title" required placeholder="Service Starting Soon!" value={notificationData.title} onChange={e => setNotificationData({...notificationData, title: e.target.value})} className="h-10" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="n-body" className="text-xs font-medium">Message <span className="text-red-500">*</span></Label>
-                  <textarea id="n-body" rows={4} maxLength={200} placeholder="Join us today at 10 AM for a powerful word..." value={notificationData.body} onChange={e => setNotificationData({...notificationData, body: e.target.value})} className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" />
-                </div>
-                <Button type="submit" disabled={submitting} className="w-full h-12 font-bold rounded-xl bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-200 flex items-center justify-center gap-2">
-                  {submitting ? <Loader2 size={18} className="animate-spin" /> : <><Send size={18} /> Broadcast Now</>}
-                </Button>
-              </form>
+              <NotificationForm
+                notificationData={notificationData}
+                setNotificationData={setNotificationData}
+                onSubmit={(e) => handleSubmit('notifications', e)}
+                submitting={submitting}
+              />
             )}
 
             {/* Ministries Form */}
             {activeTab === 'ministries' && (
-              <form onSubmit={(e) => handleSubmit('ministries', e)} className="space-y-4" noValidate>
-                <div className="space-y-1.5">
-                  <Label htmlFor="m-name" className="text-xs font-medium">Ministry Name <span className="text-red-500">*</span></Label>
-                  <Input id="m-name" required value={ministryData.name} onChange={e => setMinistryData({...ministryData, name: e.target.value})} className="h-10" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="m-icon" className="text-xs font-medium">Icon</Label>
-                    <select 
-                      id="m-icon" 
-                      className="w-full h-10 border border-border rounded-xl px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 bg-white"
-                      value={ministryData.iconName}
-                      onChange={e => setMinistryData({...ministryData, iconName: e.target.value})}
-                    >
-                      <option value="BookOpen">Learning (BookOpen)</option>
-                      <option value="Users">Community (Users)</option>
-                      <option value="Heart">Care (Heart)</option>
-                      <option value="Music">Worship (Music)</option>
-                      <option value="Shield">Protection (Shield)</option>
-                    </select>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="m-order" className="text-xs font-medium">Display order</Label>
-                    <Input id="m-order" type="number" value={ministryData.order} onChange={e => setMinistryData({...ministryData, order: parseInt(e.target.value) || 0})} className="h-10" />
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="m-style" className="text-xs font-medium">Theme Color</Label>
-                  <div className="flex gap-2">
-                    {[
-                      { bg: 'bg-brand-sage', text: 'text-brand-sage', label: 'Sage' },
-                      { bg: 'bg-brand-sky', text: 'text-brand-sky', label: 'Sky' },
-                      { bg: 'bg-rose-500', text: 'text-rose-500', label: 'Rose' },
-                      { bg: 'bg-brand-gold', text: 'text-brand-gold', label: 'Gold' },
-                      { bg: 'bg-brand-grey', text: 'text-brand-grey', label: 'Grey' },
-                    ].map(style => (
-                      <button
-                        key={style.bg}
-                        type="button"
-                        onClick={() => setMinistryData({...ministryData, color: style.bg, textColor: style.text})}
-                        className={cn(
-                          "w-8 h-8 rounded-full border-2 transition-all",
-                          style.bg,
-                          ministryData.color === style.bg ? "border-primary scale-110 shadow-md" : "border-white"
-                        )}
-                        title={style.label}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="m-desc" className="text-xs font-medium">Description <span className="text-red-500">*</span></Label>
-                  <textarea id="m-desc" rows={3} required value={ministryData.description} onChange={e => setMinistryData({...ministryData, description: e.target.value})} className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Main Image <span className="text-red-500">*</span></Label>
-                  <div className="flex items-center gap-3">
-                    <Input value={ministryData.image} onChange={e => setMinistryData({...ministryData, image: e.target.value})} placeholder="/image.jpg" className="h-10 text-xs" />
-                    <Label className="h-10 px-3 bg-slate-50 border border-dashed border-slate-300 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors shrink-0">
-                      <ImageIcon size={16} className="text-slate-400" />
-                      <input type="file" className="hidden" accept="image/*" onChange={e => handleFileUpload(e, 'ministries', (url) => setMinistryData({...ministryData, image: url}))} />
-                    </Label>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Gallery Images</Label>
-                  <div className="space-y-2">
-                    {ministryData.gallery.map((img, idx) => (
-                      <div key={idx} className="flex gap-2 items-center">
-                        <Input value={img} onChange={e => {
-                          const newGallery = [...ministryData.gallery];
-                          newGallery[idx] = e.target.value;
-                          setMinistryData({...ministryData, gallery: newGallery});
-                        }} className="h-8 text-[10px] flex-1" placeholder="/gallery-image.jpg" />
-                        <Label className="h-8 px-2 bg-slate-50 border border-dashed border-slate-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors shrink-0">
-                          <ImageIcon size={14} className="text-slate-400" />
-                          <input type="file" className="hidden" accept="image/*" onChange={e => handleFileUpload(e, 'ministries_gallery', (url) => {
-                            const newGallery = [...ministryData.gallery];
-                            newGallery[idx] = url;
-                            setMinistryData({...ministryData, gallery: newGallery});
-                          })} />
-                        </Label>
-                        <button type="button" onClick={() => setMinistryData({...ministryData, gallery: ministryData.gallery.filter((_, i) => i !== idx)})} className="text-red-400 hover:text-red-600"><Trash2 size={14}/></button>
-                      </div>
-                    ))}
-                    <Button 
-                      variant="ghost" 
-                      type="button" 
-                      size="sm" 
-                      onClick={() => setMinistryData({...ministryData, gallery: [...ministryData.gallery, '']})}
-                      className="h-8 text-[10px] w-full border border-dashed border-border"
-                    >
-                      <Plus size={12} className="mr-1" /> Add Image
-                    </Button>
-                  </div>
-                </div>
-
-                <Button type="submit" disabled={submitting} className={cn("w-full h-10 font-semibold rounded-xl", editingId && "bg-blue-500 hover:bg-blue-600")}>
-                  {submitting ? <Loader2 size={16} className="animate-spin" /> : (editingId ? 'Update Ministry' : 'Create Ministry')}
-                </Button>
-              </form>
+              <MinistryForm
+                ministryData={ministryData}
+                setMinistryData={setMinistryData}
+                onSubmit={(e) => handleSubmit('ministries', e)}
+                submitting={submitting}
+                editingId={editingId}
+                onFileUpload={handleFileUpload}
+              />
             )}
 
             {/* Leaders Form */}
             {activeTab === 'leaders' && (
-              <form onSubmit={(e) => handleSubmit('leaders', e)} className="space-y-4" noValidate>
-                <div className="space-y-1.5">
-                  <Label htmlFor="l-name" className="text-xs font-medium">Full Name <span className="text-red-500">*</span></Label>
-                  <Input id="l-name" required value={leaderData.name} onChange={e => setLeaderData({...leaderData, name: e.target.value})} className="h-10" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="l-role" className="text-xs font-medium">Role / Title <span className="text-red-500">*</span></Label>
-                  <Input id="l-role" required value={leaderData.role} onChange={e => setLeaderData({...leaderData, role: e.target.value})} className="h-10" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="l-order" className="text-xs font-medium">Display order <span className="text-red-500">*</span></Label>
-                  <Input id="l-order" type="number" value={leaderData.order} onChange={e => setLeaderData({...leaderData, order: parseInt(e.target.value) || 0})} className="h-10" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Profile Image <span className="text-red-500">*</span></Label>
-                  <div className="flex items-center gap-3">
-                    <Input value={leaderData.image} onChange={e => setLeaderData({...leaderData, image: e.target.value})} placeholder="/pastor.jpg" className="h-10 text-xs flex-1" />
-                    <Label className="h-10 px-3 bg-slate-50 border border-dashed border-slate-300 rounded-xl flex items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors shrink-0">
-                      <ImageIcon size={16} className="text-slate-400" />
-                      <input type="file" className="hidden" accept="image/*" onChange={e => handleFileUpload(e, 'leaders', (url) => setLeaderData({...leaderData, image: url}))} />
-                    </Label>
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="l-bio" className="text-xs font-medium">Biography <span className="text-red-500">*</span></Label>
-                  <textarea id="l-bio" rows={4} required value={leaderData.bio} onChange={e => setLeaderData({...leaderData, bio: e.target.value})} className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Key Responsibilities / Focus Areas</Label>
-                  <div className="space-y-2">
-                    {leaderData.responsibilities.map((req, idx) => (
-                      <div key={idx} className="flex gap-2 items-center">
-                        <Input value={req} onChange={e => {
-                          const newReqs = [...leaderData.responsibilities];
-                          newReqs[idx] = e.target.value;
-                          setLeaderData({...leaderData, responsibilities: newReqs});
-                        }} className="h-8 text-[11px] flex-1" placeholder="e.g. Oversight of Youth Ministry" />
-                        <button type="button" onClick={() => setLeaderData({...leaderData, responsibilities: leaderData.responsibilities.filter((_, i) => i !== idx)})} className="text-red-400 hover:text-red-600"><Trash2 size={14}/></button>
-                      </div>
-                    ))}
-                    <Button type="button" variant="outline" onClick={() => setLeaderData({...leaderData, responsibilities: [...leaderData.responsibilities, '']})} className="w-full h-8 text-[11px] border-dashed border-slate-300">
-                      <PlusCircle size={14} className="mr-1" /> Add Responsibility
-                    </Button>
-                  </div>
-                </div>
-                <Button type="submit" disabled={submitting} className={cn("w-full h-10 font-semibold rounded-xl", editingId && "bg-blue-500 hover:bg-blue-600")}>
-                  {submitting ? <Loader2 size={16} className="animate-spin" /> : (editingId ? 'Update Leader' : 'Create Leader')}
-                </Button>
-              </form>
+              <LeaderForm
+                leaderData={leaderData}
+                setLeaderData={setLeaderData}
+                onSubmit={(e) => handleSubmit('leaders', e)}
+                submitting={submitting}
+                editingId={editingId}
+                onFileUpload={handleFileUpload}
+              />
             )}
           </div>
         </div>
