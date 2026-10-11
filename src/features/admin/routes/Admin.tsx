@@ -294,6 +294,8 @@ const Admin = () => {
       
       let createdCount = 0;
       let updatedCount = 0;
+      let scheduledCreates = 0;
+      const syncPromises: Promise<void>[] = [];
 
       for (const seedItem of ministrySeedData) {
         const normalizedSeedName = seedItem.name.toLowerCase().trim();
@@ -308,32 +310,41 @@ const Admin = () => {
             (seedItem.gallery && JSON.stringify(existing.gallery) !== JSON.stringify(seedItem.gallery));
 
           if (needsUpdate) {
-            await updateMinistry(existing.id!, {
-              iconName: seedItem.iconName,
-              color: seedItem.color,
-              textColor: seedItem.textColor,
-              image: seedItem.image,
-              gallery: seedItem.gallery || [],
-              description: seedItem.description // Also sync description in case it changed
-            });
-            updatedCount++;
+            syncPromises.push(
+              updateMinistry(existing.id!, {
+                iconName: seedItem.iconName,
+                color: seedItem.color,
+                textColor: seedItem.textColor,
+                image: seedItem.image,
+                gallery: seedItem.gallery || [],
+                description: seedItem.description // Also sync description in case it changed
+              }).then(() => {
+                updatedCount++;
+              })
+            );
           }
         } else {
           // Create new
-          await addMinistry({
-            name: seedItem.name.trim(),
-            description: seedItem.description,
-            image: seedItem.image,
-            gallery: seedItem.gallery || [],
-            iconName: seedItem.iconName,
-            color: seedItem.color,
-            textColor: seedItem.textColor,
-            order: (createdCount + current.length) * 10
-          });
-          createdCount++;
+          syncPromises.push(
+            addMinistry({
+              name: seedItem.name.trim(),
+              description: seedItem.description,
+              image: seedItem.image,
+              gallery: seedItem.gallery || [],
+              iconName: seedItem.iconName,
+              color: seedItem.color,
+              textColor: seedItem.textColor,
+              order: (scheduledCreates + current.length) * 10
+            }).then(() => {
+              createdCount++;
+            })
+          );
+          scheduledCreates++;
         }
       }
       
+      await Promise.all(syncPromises);
+
       await fetchData();
       const message = [
         createdCount > 0 ? `Created ${createdCount}` : null,
