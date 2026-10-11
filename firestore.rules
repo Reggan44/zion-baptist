@@ -6,8 +6,7 @@ service cloud.firestore {
     // Helper: Check if the request is from a verified admin
     function isAdmin() {
       return request.auth != null &&
-        (exists(/databases/$(database)/documents/admins/$(request.auth.token.email)) ||
-         request.auth.token.email == 'wambuareggan@gmail.com');
+        exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
     }
 
     // ── Public Collections (read-only) ──────────────────────────────────────
