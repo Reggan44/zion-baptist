@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -5,7 +6,7 @@ import { getSermonById, getSermons } from '../api/getSermons';
 import type { Sermon } from '../../../types';
 import { Calendar, ChevronLeft, Play, AlertCircle, Share2, Library, ArrowRight } from 'lucide-react';
 import { Button } from '../../../components/elements/Button';
-import { cn } from '../../../utils';
+
 import SEO from '../../../components/seo/SEO';
 
 const getYouTubeEmbedUrl = (url: string) => {

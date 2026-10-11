@@ -19,7 +19,7 @@ import {
 import { Button } from '../../../components/elements/Button';
 import { Input } from '../../../components/elements/Input';
 import { Label } from '../../../components/elements/Label';
-import { cn } from '../../../utils';
+import { cn } from '@/lib/utils';
 import {
   isNonEmpty, isValidUrl, isWithinMaxLength, sanitizeText
 } from '../../../utils/validation';
