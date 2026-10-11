@@ -85,7 +85,7 @@ export const useNotifications = () => {
         console.warn('FCM: getToken returned null. Check VAPID key and service worker.');
         setError('token-failed');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Notification error:', err);
       setError('token-failed');
     } finally {
@@ -116,7 +116,6 @@ export const useNotifications = () => {
     getMessagingInstance().then((messagingInstance) => {
       if (!messagingInstance) return;
       unsubscribe = onMessage(messagingInstance, (payload) => {
-        console.log('Foreground FCM message:', payload);
         if (Notification.permission === 'granted') {
           new Notification(payload.notification?.title || 'Zion Baptist Church', {
             body: payload.notification?.body,
