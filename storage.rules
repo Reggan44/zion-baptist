@@ -6,8 +6,7 @@ service firebase.storage {
     // Function to check if a user is an admin
     function isAdmin() {
       return request.auth != null && 
-        (firestore.exists(/databases/(default)/documents/admins/$(request.auth.token.email)) || 
-         request.auth.token.email == 'wambuareggan@gmail.com');
+        firestore.exists(/databases/(default)/documents/admins/$(request.auth.token.email));
     }
 
     // Public church assets: Read for all, Write for Admin
