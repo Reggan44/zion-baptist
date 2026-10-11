@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSermons } from '../../../hooks/useSermons';
 import { Button } from '../../../components/elements/Button';
 import { Play, Calendar, ChevronRight, AlertCircle } from 'lucide-react';
-import { cn } from '../../../utils';
+import { cn, getYouTubeEmbedUrl } from '../../../utils';
 import { useState } from 'react';
 import SEO from '../../../components/seo/SEO';
 
@@ -22,22 +22,6 @@ const SERMONS_SCHEMA = {
       { '@type': 'ListItem', 'position': 2, 'name': 'Sermons', 'item': 'https://aichappyvalley.org/sermons' }
     ]
   }
-};
-
-const getYouTubeEmbedUrl = (url: string) => {
-  if (!url) return '';
-  if (url.includes('embed/')) return url;
-  
-  let id = '';
-  if (url.includes('v=')) {
-    id = url.split('v=')[1].split('&')[0];
-  } else if (url.includes('youtu.be/')) {
-    id = url.split('youtu.be/')[1].split('?')[0];
-  } else if (url.includes('shorts/')) {
-    id = url.split('shorts/')[1].split('?')[0];
-  }
-  
-  return id ? `https://www.youtube-nocookie.com/embed/${id}` : url;
 };
 
 const Sermons = () => {
