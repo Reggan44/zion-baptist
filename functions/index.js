@@ -3,6 +3,69 @@ const admin = require('firebase-admin');
 
 admin.initializeApp();
 
+exports.submitContactMessage = functions.https.onCall(async (data, context) => {
+  const { name, email, subject, message, recaptchaToken } = data;
+
+  if (!recaptchaToken) {
+    throw new functions.https.HttpsError(
+      'failed-precondition',
+      'The function must be called with a valid recaptcha token.'
+    );
+  }
+
+  if (!name || !email || !message) {
+     throw new functions.https.HttpsError(
+      'invalid-argument',
+      'The function must be called with name, email, and message.'
+    );
+  }
+
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+  if (!secretKey) {
+    console.error('RECAPTCHA_SECRET_KEY environment variable is missing.');
+    throw new functions.https.HttpsError(
+      'internal',
+      'Server configuration error.'
+    );
+  }
+
+  try {
+    const fetchResponse = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`,
+      { method: 'POST' }
+    );
+    const result = await fetchResponse.json();
+
+    if (!result.success) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        'reCAPTCHA verification failed.'
+      );
+    }
+  } catch (error) {
+    console.error('reCAPTCHA verification error:', error);
+    throw new functions.https.HttpsError(
+      'internal',
+      'An error occurred during reCAPTCHA verification.'
+    );
+  }
+
+  try {
+    const docRef = await admin.firestore().collection('contact_messages').add({
+      name,
+      email,
+      subject: subject || '',
+      message,
+      read: false,
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error('Error adding document: ', error);
+    throw new functions.https.HttpsError('internal', 'Unable to save contact message.');
+  }
+});
+
 exports.sendBroadcastNotification = functions.firestore
   .document('notifications/{notificationId}')
   .onCreate(async (snap, context) => {
