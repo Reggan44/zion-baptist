@@ -48,25 +48,15 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-12 h-12 rounded-full overflow-hidden shadow-sm transition-transform group-hover:scale-105 shrink-0 aspect-square border-2 border-primary/20 bg-white flex items-center justify-center">
-              <img 
-                src="/logo.png" 
-                alt={CHURCH_CONFIG.name} 
-                className="w-full h-full object-cover" 
-                onError={(e) => {
-                  e.currentTarget.src = "/pwa-192x192.png";
-                }}
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-black tracking-tight text-foreground group-hover:text-primary transition-colors leading-none">
-                Zion Road
-              </span>
-              <span className="text-xs font-bold text-primary tracking-wider uppercase">
-                Baptist Church
-              </span>
-            </div>
+          <Link to="/" className="flex items-center group">
+            <img 
+              src="/logo-dark.svg" 
+              alt={CHURCH_CONFIG.name} 
+              className="h-10 sm:h-12 md:h-14 w-auto transition-transform group-hover:scale-105" 
+              onError={(e) => {
+                e.currentTarget.src = "/pwa-192x192.png";
+              }}
+            />
           </Link>
 
           {/* Desktop Links */}
@@ -104,6 +94,7 @@ const Navbar = () => {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-full text-foreground hover:bg-primary/10 transition-colors"
+              aria-label="Toggle menu"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -116,7 +107,7 @@ const Navbar = () => {
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="lg:hidden bg-background/95 backdrop-blur-xl border-b border-border absolute top-full left-0 w-full p-6 space-y-4 shadow-2xl"
+          className="lg:hidden bg-background/95 backdrop-blur-xl border-b border-border absolute top-full left-0 w-full p-6 space-y-4 shadow-2xl max-h-[calc(100vh-5rem)] overflow-y-auto"
         >
           {activeNavLinks.map((link) => (
             <Link

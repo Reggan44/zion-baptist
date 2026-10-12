@@ -1,6 +1,9 @@
-import { getBooksFromDB, saveBooksToDB, getChapterFromDB } from './offlineBible';
+import { getBooksFromDB, saveBooksToDB, getChapterFromDB, saveChapterToDB } from './offlineBible';
 
 const BASE_URL = 'https://bolls.life';
+
+// In-memory cache for instantaneous verse switching
+const chapterMemoryCache = new Map<string, BibleVerse[]>();
 
 export interface BibleBook {
   bookid: number;
@@ -109,16 +112,60 @@ export const getBibleBooks = async (translation: string): Promise<BibleBook[]> =
 };
 
 export const getBibleChapter = async (translation: string, bookId: number, chapter: number): Promise<BibleVerse[]> => {
+  const cacheKey = `${translation}-${bookId}-${chapter}`;
+
+  // 1. Fast in-memory cache (0ms return)
+  if (chapterMemoryCache.has(cacheKey)) {
+    return chapterMemoryCache.get(cacheKey)!;
+  }
+
+  // 2. Fast IndexedDB persistent local cache
   try {
     const localChapter = await getChapterFromDB(translation, bookId, chapter);
     if (localChapter && localChapter.length > 0) {
+      chapterMemoryCache.set(cacheKey, localChapter);
       return localChapter;
     }
   } catch (error) {
     console.error('Failed to get chapter from IDB:', error);
   }
 
+  // 3. Network fetch
   const response = await fetch(`${BASE_URL}/get-text/${translation}/${bookId}/${chapter}/`);
   if (!response.ok) throw new Error('Failed to fetch chapter');
-  return response.json();
+  const verses: BibleVerse[] = await response.json();
+
+  // Store immediately in memory cache and persistent IndexedDB
+  chapterMemoryCache.set(cacheKey, verses);
+  saveChapterToDB(translation, bookId, chapter, verses).catch(console.error);
+
+  // 4. Background prefetch next chapter (optimistic caching)
+  setTimeout(() => {
+    prefetchNextChapter(translation, bookId, chapter + 1);
+  }, 300);
+
+  return verses;
+};
+
+// Background prefetch helper so subsequent chapter turns are 0ms
+const prefetchNextChapter = async (translation: string, bookId: number, nextChapter: number) => {
+  const nextKey = `${translation}-${bookId}-${nextChapter}`;
+  if (chapterMemoryCache.has(nextKey)) return;
+
+  try {
+    const local = await getChapterFromDB(translation, bookId, nextChapter);
+    if (local && local.length > 0) {
+      chapterMemoryCache.set(nextKey, local);
+      return;
+    }
+
+    const res = await fetch(`${BASE_URL}/get-text/${translation}/${bookId}/${nextChapter}/`);
+    if (res.ok) {
+      const data: BibleVerse[] = await res.json();
+      chapterMemoryCache.set(nextKey, data);
+      saveChapterToDB(translation, bookId, nextChapter, data).catch(console.error);
+    }
+  } catch {
+    // Ignore prefetch errors in background
+  }
 };

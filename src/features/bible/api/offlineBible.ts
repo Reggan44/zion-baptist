@@ -120,17 +120,21 @@ export const downloadFullTranslation = async (translation: string): Promise<void
       });
     }
 
-    console.log(`[Bible Sync] Found ${chaptersMap.size} chapters. Saving to IDB...`);
+    console.log(`[Bible Sync] Found ${chaptersMap.size} chapters. Saving to IDB in batches...`);
 
-    // Use a transaction to put all chapters
-    const tx = db.transaction('chapters', 'readwrite');
-    const store = tx.objectStore('chapters');
+    // Process in batches of 50 chapters with brief pauses to avoid freezing the browser UI and locking IDB
+    const chaptersList = Array.from(chaptersMap.values());
+    const batchSize = 50;
 
-    for (const chapter of chaptersMap.values()) {
-      await store.put(chapter);
+    for (let i = 0; i < chaptersList.length; i += batchSize) {
+      const batch = chaptersList.slice(i, i + batchSize);
+      const tx = db.transaction('chapters', 'readwrite');
+      const store = tx.objectStore('chapters');
+      await Promise.all(batch.map(chapter => store.put(chapter)));
+      await tx.done;
+      // Brief tick to allow UI threads to breathe
+      await new Promise(res => setTimeout(res, 10));
     }
-
-    await tx.done;
 
     // Mark as downloaded
     await db.put('metadata', {
@@ -142,6 +146,22 @@ export const downloadFullTranslation = async (translation: string): Promise<void
     console.log(`[Bible Sync] ${translation} saved successfully.`);
   } catch (error) {
     console.error(`[Bible Sync] Error downloading ${translation}:`, error);
+  }
+};
+
+export const saveChapterToDB = async (translation: string, book: number, chapter: number, verses: BibleVerse[]): Promise<void> => {
+  try {
+    const db = await getDB();
+    const id = `${translation}-${book}-${chapter}`;
+    await db.put('chapters', {
+      id,
+      translation,
+      book,
+      chapter,
+      verses
+    });
+  } catch (error) {
+    console.error('Error saving individual chapter to IDB:', error);
   }
 };
 

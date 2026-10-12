@@ -39,7 +39,6 @@ function App() {
         <ScrollToTop />
         <div className="flex flex-col min-h-screen bg-background text-foreground font-sans">
           <AppSmartBanner />
-          <NotificationModal />
           <Navbar />
           <main className="flex-grow overflow-x-hidden">
             <Suspense fallback={<PageLoader />}>

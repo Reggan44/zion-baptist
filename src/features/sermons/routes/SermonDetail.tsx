@@ -24,6 +24,14 @@ const getYouTubeEmbedUrl = (url: string) => {
   return id ? `https://www.youtube-nocookie.com/embed/${id}` : url;
 };
 
+const getYouTubeId = (url: string) => {
+  if (!url) return '';
+  if (url.includes('v=')) return url.split('v=')[1].split('&')[0];
+  if (url.includes('youtu.be/')) return url.split('youtu.be/')[1].split('?')[0];
+  if (url.includes('embed/')) return url.split('embed/')[1].split('?')[0];
+  return '';
+};
+
 const SermonDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -211,7 +219,7 @@ const SermonDetail = () => {
               <Link key={recent.id} to={`/sermons/${recent.id}`}>
                 <div className="bg-white border rounded-2xl p-5 hover:shadow-lg transition-all group h-full">
                   <div className="aspect-video bg-slate-100 rounded-xl mb-4 overflow-hidden relative">
-                    <img src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=400&q=80" alt={recent.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                    <img src={`https://img.youtube.com/vi/${getYouTubeId(recent.videoUrl)}/mqdefault.jpg`} alt={recent.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                     <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                        <Play className="text-white fill-white" size={24} />
                     </div>

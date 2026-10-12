@@ -440,7 +440,7 @@ export function AnimatedCharactersLogin({
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@aichappyvalley.org"
+                placeholder="admin@zionbaptist.org"
                 value={email}
                 disabled={isLoading || isLockedOut}
                 onChange={(e) => setEmail(e.target.value)}

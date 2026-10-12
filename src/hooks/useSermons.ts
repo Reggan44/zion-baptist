@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
-import { db } from '../lib/firebase';
 import type { Sermon } from '../types';
+import { getSermons } from '../features/sermons/api/getSermons';
 
 interface UseSermonsReturn {
   sermons: Sermon[];
@@ -22,14 +21,9 @@ export const useSermons = (maxResults = 20): UseSermonsReturn => {
       setLoading(true);
       setError(null);
       try {
-        const q = query(
-          collection(db, 'sermons'),
-          orderBy('date', 'desc'),
-          limit(maxResults)
-        );
-        const snap = await getDocs(q);
+        const data = await getSermons(maxResults);
         if (!cancelled) {
-          setSermons(snap.docs.map(d => ({ id: d.id, ...d.data() } as Sermon)));
+          setSermons(data);
         }
       } catch {
         if (!cancelled) setError('Failed to load sermons. Please try again later.');

@@ -513,35 +513,20 @@ const Admin = () => {
               </div>
             )}
 
-            {/* Sermons Form */}
+            {/* Sermons - YouTube Sync Info */}
             {activeTab === 'sermons' && (
-              <form onSubmit={(e) => handleSubmit('sermons', e)} className="space-y-4" noValidate>
-                <div className="space-y-1.5">
-                  <Label htmlFor="s-title" className="text-xs font-medium">Title <span className="text-red-500">*</span></Label>
-                  <Input id="s-title" required maxLength={200} value={sermonData.title} onChange={e => setSermonData({...sermonData, title: e.target.value})} className="h-10" />
+              <div className="p-8 text-center bg-red-50 border border-red-100 rounded-[2rem] flex flex-col items-center shadow-inner">
+                <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-6 shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="s-date" className="text-xs font-medium">Date <span className="text-red-500">*</span></Label>
-                    <Input id="s-date" required type="date" value={sermonData.date} onChange={e => setSermonData({...sermonData, date: e.target.value})} className="h-10" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="s-category" className="text-xs font-medium">Category</Label>
-                    <Input id="s-category" maxLength={100} value={sermonData.category} onChange={e => setSermonData({...sermonData, category: e.target.value})} className="h-10" placeholder="Sunday" />
-                  </div>
+                <h3 className="text-xl font-bold text-red-900 mb-2 tracking-tight">Automated YouTube Sync Active</h3>
+                <p className="text-red-800/80 max-w-sm leading-relaxed font-medium">
+                  You no longer need to upload sermons manually! All videos are automatically synced from the Zion Baptist Church YouTube channel in real-time.
+                </p>
+                <div className="mt-8 px-6 py-3 bg-white/60 rounded-xl text-sm text-red-900 font-semibold border border-red-200/50">
+                  Just upload to YouTube and it appears instantly on the website.
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="s-url" className="text-xs font-medium">Video URL (https://) <span className="text-red-500">*</span></Label>
-                  <Input id="s-url" required type="url" placeholder="https://youtube.com/watch?v=" value={sermonData.videoUrl} onChange={e => setSermonData({...sermonData, videoUrl: e.target.value})} className="h-10" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="s-desc" className="text-xs font-medium">Description</Label>
-                  <textarea id="s-desc" rows={3} maxLength={2000} value={sermonData.description} onChange={e => setSermonData({...sermonData, description: e.target.value})} className="w-full border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none" />
-                </div>
-                <Button type="submit" disabled={submitting} className={cn("w-full h-10 font-semibold rounded-xl", editingId && "bg-blue-500 hover:bg-blue-600")}>
-                  {submitting ? <Loader2 size={16} className="animate-spin" aria-hidden="true" /> : (editingId ? 'Update' : 'Create')}
-                </Button>
-              </form>
+              </div>
             )}
 
             {/* Events Form */}
@@ -772,15 +757,15 @@ const Admin = () => {
           ) : (
             <div className="space-y-3">
               {activeTab === 'sermons' && sermons.map(sermon => (
-                <ItemCard
-                  key={sermon.id}
-                  title={sermon.title}
-                  subtitle={sermon.date}
-                  badge={sermon.category}
-                  onEdit={() => startEdit(sermon, 'sermons')}
-                  onDelete={() => handleDelete(sermon.id!, 'sermons', sermon.title)}
-                  isEditing={editingId === sermon.id}
-                />
+                <div key={sermon.id} className="p-5 bg-white border border-slate-100 hover:border-slate-200 rounded-2xl flex items-center justify-between shadow-sm transition-all group">
+                  <div>
+                    <h4 className="font-bold text-slate-800 group-hover:text-primary transition-colors">{sermon.title}</h4>
+                    <p className="text-xs font-medium text-slate-400 mt-1 uppercase tracking-wider">{sermon.date}</p>
+                  </div>
+                  <a href={sermon.videoUrl} target="_blank" rel="noreferrer" className="text-xs bg-red-50 hover:bg-red-100 text-red-600 font-bold px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-4">
+                    View on YouTube
+                  </a>
+                </div>
               ))}
               {activeTab === 'events' && events.map(event => (
                 <ItemCard

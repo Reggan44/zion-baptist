@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, MessageSquare, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Button } from '../components/elements/Button';
@@ -30,19 +29,12 @@ const COOLDOWN_MS = 60_000;
 
 const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
-
-    if (!recaptchaToken) {
-      setErrorMessage('Please verify that you are not a robot.');
-      return;
-    }
 
     if (!formData.name || !formData.email || !formData.message) {
       setErrorMessage('Please fill in all required fields.');
@@ -56,16 +48,35 @@ const Contact = () => {
 
     setStatus('submitting');
     try {
+      // 1. Save backup to Firebase Database
       await addDoc(collection(db, 'contact_messages'), {
         ...formData,
         read: false,
         createdAt: serverTimestamp()
       });
+
+      // 2. Send actual email via Web3Forms (if key is configured)
+      const web3formsKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+      if (web3formsKey) {
+        await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            access_key: web3formsKey,
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject || 'New Contact Form Message',
+            message: formData.message,
+            from_name: 'Zion Baptist Church Website'
+          })
+        });
+      }
       
       setStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
-      recaptchaRef.current?.reset();
-      setRecaptchaToken(null);
       recordSubmission(RATE_LIMIT_KEY);
       
       setTimeout(() => setStatus('idle'), 5000);
@@ -231,19 +242,6 @@ const Contact = () => {
                   />
                 </div>
 
-                <div className="pt-1 min-h-[78px]">
-                  {import.meta.env.VITE_RECAPTCHA_SITE_KEY ? (
-                    <ReCAPTCHA
-                      ref={recaptchaRef}
-                      sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                      onChange={(token) => setRecaptchaToken(token)}
-                    />
-                  ) : (
-                    <div className="text-xs text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-200 flex items-center gap-2">
-                      <AlertCircle size={16} /> Captcha configuration missing.
-                    </div>
-                  )}
-                </div>
 
                 <Button 
                   type="submit"

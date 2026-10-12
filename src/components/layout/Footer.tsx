@@ -8,25 +8,15 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
-            <Link to="/" className="flex items-center gap-3 transition-transform hover:scale-105 group">
-              <div className="w-12 h-12 rounded-full overflow-hidden shadow-sm shrink-0 border-2 border-primary/20 bg-white flex items-center justify-center">
-                <img 
-                  src="/logo.png" 
-                  alt={CHURCH_CONFIG.name} 
-                  className="w-full h-full object-cover" 
-                  onError={(e) => {
-                    e.currentTarget.src = "/pwa-192x192.png";
-                  }}
-                />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-black tracking-tight text-foreground group-hover:text-primary transition-colors leading-none">
-                  Zion Road
-                </span>
-                <span className="text-xs font-bold text-primary tracking-wider uppercase">
-                  Baptist Church
-                </span>
-              </div>
+            <Link to="/" className="flex items-center transition-transform hover:scale-105 group">
+              <img 
+                src="/logo-dark.svg" 
+                alt={CHURCH_CONFIG.name} 
+                className="h-12 w-auto" 
+                onError={(e) => {
+                  e.currentTarget.src = "/pwa-192x192.png";
+                }}
+              />
             </Link>
             <p className="text-muted-foreground leading-relaxed text-xs font-medium max-w-xs">
               "{CHURCH_CONFIG.tagline}" — {CHURCH_CONFIG.scripture}

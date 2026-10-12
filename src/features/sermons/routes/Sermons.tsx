@@ -40,6 +40,14 @@ const getYouTubeEmbedUrl = (url: string) => {
   return id ? `https://www.youtube-nocookie.com/embed/${id}` : url;
 };
 
+const getYouTubeId = (url: string) => {
+  if (!url) return '';
+  if (url.includes('v=')) return url.split('v=')[1].split('&')[0];
+  if (url.includes('youtu.be/')) return url.split('youtu.be/')[1].split('?')[0];
+  if (url.includes('embed/')) return url.split('embed/')[1].split('?')[0];
+  return '';
+};
+
 const Sermons = () => {
   const { sermons, loading, error } = useSermons(24);
   const [activeCategory, setActiveCategory] = useState<string>('All');
@@ -57,17 +65,17 @@ const Sermons = () => {
         schema={SERMONS_SCHEMA}
       />
       {/* Header - Rebranded */}
-      <section className="relative pt-52 pb-24 px-4 bg-primary overflow-hidden">
+      <section className="relative pt-32 sm:pt-40 md:pt-48 pb-14 sm:pb-18 px-4 bg-primary overflow-hidden">
         <div className="absolute top-0 right-0 w-[40%] h-full bg-secondary/5 blur-[100px] rounded-full translate-x-1/2"></div>
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-10 relative z-10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <span className="inline-block px-4 py-1.5 bg-secondary/10 text-secondary text-[10px] font-black rounded-full uppercase tracking-[0.3em] mb-6 border border-secondary/20 backdrop-blur-sm">
+            <span className="inline-block px-4 py-1.5 bg-secondary/10 text-secondary text-[10px] font-black rounded-full uppercase tracking-[0.3em] mb-4 border border-secondary/20 backdrop-blur-sm">
               Media Library
             </span>
-            <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter italic uppercase mb-4">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tighter italic uppercase mb-3">
               Sermon <span className="text-secondary transition-colors">Archive</span>
             </h1>
-            <p className="text-slate-300 text-lg max-w-xl font-medium leading-relaxed">
+            <p className="text-slate-300 text-base sm:text-lg max-w-xl font-medium leading-relaxed">
               Catch up on the latest messages. Immerse yourself in the Word of God anytime, anywhere with our digital library.
             </p>
           </motion.div>
@@ -76,7 +84,7 @@ const Sermons = () => {
             <motion.div 
               initial={{ opacity: 0, x: 20 }} 
               animate={{ opacity: 1, x: 0 }}
-              className="flex bg-white/5 backdrop-blur-xl p-1.5 rounded-2xl border border-white/10 shadow-2xl overflow-x-auto"
+              className="flex bg-white/5 backdrop-blur-xl p-1.5 rounded-2xl border border-white/10 shadow-2xl overflow-x-auto max-w-full"
             >
               {categories.map(category => (
                 <button
@@ -84,7 +92,7 @@ const Sermons = () => {
                   onClick={() => setActiveCategory(category)}
                   aria-pressed={activeCategory === category}
                   className={cn(
-                    "px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap",
+                    "px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap",
                     activeCategory === category
                       ? 'bg-secondary text-primary shadow-lg'
                       : 'text-slate-400 hover:text-white'
@@ -99,7 +107,7 @@ const Sermons = () => {
       </section>
 
       {/* Content Grid - Modernized */}
-      <section className="pt-52 pb-24 px-4">
+      <section className="py-12 sm:py-16 md:py-20 px-4">
         <div className="max-w-7xl mx-auto">
           {error && (
             <div role="alert" className="flex items-center gap-4 p-6 bg-red-50 border border-red-100 text-red-700 rounded-[2rem] mb-12 shadow-sm">
@@ -134,14 +142,11 @@ const Sermons = () => {
                     <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-700 h-full flex flex-col relative">
                       <div className="aspect-video relative overflow-hidden bg-slate-950">
                         {sermon.videoUrl && (
-                          <iframe
-                            src={getYouTubeEmbedUrl(sermon.videoUrl)}
-                            title={`Sermon: ${sermon.title}`}
-                            className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-700"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
+                          <img
+                            src={`https://img.youtube.com/vi/${getYouTubeId(sermon.videoUrl)}/maxresdefault.jpg`}
+                            alt={`Sermon: ${sermon.title}`}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
                             loading="lazy"
-                            sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
                           />
                         )}
                         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
@@ -150,7 +155,7 @@ const Sermons = () => {
                             {sermon.category || 'Service'}
                           </span>
                         </div>
-                        <div className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                        <div className="absolute inset-0 z-10 flex items-center justify-center opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all pointer-events-none">
                            <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-2xl">
                               <Play size={24} className="text-white ml-1" fill="currentColor" />
                            </div>
@@ -171,9 +176,9 @@ const Sermons = () => {
                           {sermon.description}
                         </p>
                         <div className="mt-auto pt-6 border-t border-slate-50">
-                          <span className="text-xs font-black text-secondary flex items-center gap-2 uppercase tracking-widest group-hover:translate-x-2 transition-transform">
+                          <Button className="w-full justify-between bg-secondary hover:bg-primary text-white rounded-xl py-3.5 md:py-4 font-bold shadow-sm hover:shadow-md transition-all text-sm">
                             Watch Full Sermon <ChevronRight size={18} aria-hidden="true" />
-                          </span>
+                          </Button>
                         </div>
                       </div>
                       <div className="absolute inset-x-0 bottom-0 h-1 bg-secondary scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
