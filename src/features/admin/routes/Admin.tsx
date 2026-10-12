@@ -294,6 +294,7 @@ const Admin = () => {
       
       let createdCount = 0;
       let updatedCount = 0;
+      const syncPromises = [];
 
       for (const seedItem of ministrySeedData) {
         const normalizedSeedName = seedItem.name.toLowerCase().trim();
@@ -308,32 +309,37 @@ const Admin = () => {
             (seedItem.gallery && JSON.stringify(existing.gallery) !== JSON.stringify(seedItem.gallery));
 
           if (needsUpdate) {
-            await updateMinistry(existing.id!, {
-              iconName: seedItem.iconName,
-              color: seedItem.color,
-              textColor: seedItem.textColor,
-              image: seedItem.image,
-              gallery: seedItem.gallery || [],
-              description: seedItem.description // Also sync description in case it changed
-            });
+            syncPromises.push(
+              updateMinistry(existing.id!, {
+                iconName: seedItem.iconName,
+                color: seedItem.color,
+                textColor: seedItem.textColor,
+                image: seedItem.image,
+                gallery: seedItem.gallery || [],
+                description: seedItem.description // Also sync description in case it changed
+              })
+            );
             updatedCount++;
           }
         } else {
           // Create new
-          await addMinistry({
-            name: seedItem.name.trim(),
-            description: seedItem.description,
-            image: seedItem.image,
-            gallery: seedItem.gallery || [],
-            iconName: seedItem.iconName,
-            color: seedItem.color,
-            textColor: seedItem.textColor,
-            order: (createdCount + current.length) * 10
-          });
+          syncPromises.push(
+            addMinistry({
+              name: seedItem.name.trim(),
+              description: seedItem.description,
+              image: seedItem.image,
+              gallery: seedItem.gallery || [],
+              iconName: seedItem.iconName,
+              color: seedItem.color,
+              textColor: seedItem.textColor,
+              order: (createdCount + current.length) * 10
+            })
+          );
           createdCount++;
         }
       }
       
+      await Promise.all(syncPromises);
       await fetchData();
       const message = [
         createdCount > 0 ? `Created ${createdCount}` : null,
@@ -359,6 +365,7 @@ const Admin = () => {
       
       let createdCount = 0;
       let updatedCount = 0;
+      const syncPromises = [];
 
       for (const seedItem of leaderSeedData) {
         const leaderItem = seedItem as Leader;
@@ -367,25 +374,30 @@ const Admin = () => {
 
         if (existing) {
           // Update existing
-          await updateLeader(existing.id!, {
-            role: leaderItem.role,
-            bio: leaderItem.bio,
-            image: leaderItem.image,
-            responsibilities: leaderItem.responsibilities || [],
-            order: leaderItem.order || 0
-          });
+          syncPromises.push(
+            updateLeader(existing.id!, {
+              role: leaderItem.role,
+              bio: leaderItem.bio,
+              image: leaderItem.image,
+              responsibilities: leaderItem.responsibilities || [],
+              order: leaderItem.order || 0
+            })
+          );
           updatedCount++;
         } else {
           // Create new
-          await addLeader({
-            ...seedItem,
-            responsibilities: seedItem.responsibilities || [],
-            order: seedItem.order || 0
-          });
+          syncPromises.push(
+            addLeader({
+              ...seedItem,
+              responsibilities: seedItem.responsibilities || [],
+              order: seedItem.order || 0
+            })
+          );
           createdCount++;
         }
       }
       
+      await Promise.all(syncPromises);
       await fetchData();
       const message = [
         createdCount > 0 ? `Created ${createdCount}` : null,
