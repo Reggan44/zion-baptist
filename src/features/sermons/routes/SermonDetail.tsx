@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useParams, Link } from 'react-router-dom';
 import { getSermonById, getSermons } from '../api/getSermons';
 import type { Sermon } from '../../../types';
-import { Calendar, ChevronLeft, Play, AlertCircle, Share2, Library, ArrowRight } from 'lucide-react';
+import { Calendar, ChevronLeft, Play, AlertCircle, Share2, ArrowRight } from 'lucide-react';
 import { Button } from '../../../components/elements/Button';
-import { cn } from '../../../utils';
 import SEO from '../../../components/seo/SEO';
 
 const getYouTubeEmbedUrl = (url: string) => {
@@ -26,7 +24,6 @@ const getYouTubeEmbedUrl = (url: string) => {
 
 const SermonDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [sermon, setSermon] = useState<Sermon | null>(null);
   const [recentSermons, setRecentSermons] = useState<Sermon[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +44,7 @@ const SermonDetail = () => {
         } else {
           setError('Sermon not found.');
         }
-      } catch (err) {
+      } catch {
         setError('Failed to load sermon content.');
       } finally {
         setLoading(false);

@@ -4,17 +4,44 @@ import type { Sermon } from '../../../types';
 
 const SERMONS_COLLECTION = 'sermons';
 
+const sermonsCache = new Map<string, Sermon>();
+let recentSermonsCache: Sermon[] | null = null;
+
 export const getSermons = async (maxResults = 50): Promise<Sermon[]> => {
+  // If we have a recent sermons cache and it has enough items, return a slice of it
+  if (recentSermonsCache && recentSermonsCache.length >= maxResults) {
+    return recentSermonsCache.slice(0, maxResults);
+  }
+
   const q = query(collection(db, SERMONS_COLLECTION), orderBy('date', 'desc'), limit(maxResults));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(d => ({ id: d.id, ...d.data() } as Sermon));
+  const sermons = querySnapshot.docs.map(d => ({ id: d.id, ...d.data() } as Sermon));
+
+  // Update cache with fetched sermons
+  sermons.forEach(s => {
+    if (s.id) sermonsCache.set(s.id, s);
+  });
+
+  // Cache the result for future `getSermons` calls
+  // (We only update the cache if it's the largest fetch we've done so far)
+  if (!recentSermonsCache || sermons.length >= recentSermonsCache.length) {
+    recentSermonsCache = sermons;
+  }
+
+  return sermons;
 };
 
 export const getSermonById = async (id: string): Promise<Sermon | null> => {
+  if (sermonsCache.has(id)) {
+    return sermonsCache.get(id) || null;
+  }
+
   const docRef = doc(db, SERMONS_COLLECTION, id);
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
-    return { id: docSnap.id, ...docSnap.data() } as Sermon;
+    const sermon = { id: docSnap.id, ...docSnap.data() } as Sermon;
+    sermonsCache.set(id, sermon);
+    return sermon;
   }
   return null;
 };
