@@ -292,10 +292,8 @@ const Admin = () => {
       const { ministrySeedData } = await import('../../../data/ministries-seed');
       const current = await getMinistries();
       
-      let createdCount = 0;
-      let updatedCount = 0;
-
-      for (const seedItem of ministrySeedData) {
+      let createdCounter = 0;
+      const promises = ministrySeedData.map(async (seedItem) => {
         const normalizedSeedName = seedItem.name.toLowerCase().trim();
         const existing = current.find(m => m.name.toLowerCase().trim() === normalizedSeedName);
 
@@ -316,9 +314,12 @@ const Admin = () => {
               gallery: seedItem.gallery || [],
               description: seedItem.description // Also sync description in case it changed
             });
-            updatedCount++;
+            return 'updated';
           }
+          return 'none';
         } else {
+          // Calculate order synchronously before await
+          const order = (createdCounter++ + current.length) * 10;
           // Create new
           await addMinistry({
             name: seedItem.name.trim(),
@@ -328,11 +329,15 @@ const Admin = () => {
             iconName: seedItem.iconName,
             color: seedItem.color,
             textColor: seedItem.textColor,
-            order: (createdCount + current.length) * 10
+            order
           });
-          createdCount++;
+          return 'created';
         }
-      }
+      });
+
+      const results = await Promise.all(promises);
+      const createdCount = results.filter(r => r === 'created').length;
+      const updatedCount = results.filter(r => r === 'updated').length;
       
       await fetchData();
       const message = [
@@ -357,10 +362,7 @@ const Admin = () => {
       const { leaderSeedData } = await import('../../../data/ministries-seed');
       const current = await getLeaders();
       
-      let createdCount = 0;
-      let updatedCount = 0;
-
-      for (const seedItem of leaderSeedData) {
+      const promises = leaderSeedData.map(async (seedItem) => {
         const leaderItem = seedItem as Leader;
         const normalizedSeedName = leaderItem.name.toLowerCase().trim();
         const existing = current.find(l => l.name.toLowerCase().trim() === normalizedSeedName);
@@ -374,7 +376,7 @@ const Admin = () => {
             responsibilities: leaderItem.responsibilities || [],
             order: leaderItem.order || 0
           });
-          updatedCount++;
+          return 'updated';
         } else {
           // Create new
           await addLeader({
@@ -382,9 +384,13 @@ const Admin = () => {
             responsibilities: seedItem.responsibilities || [],
             order: seedItem.order || 0
           });
-          createdCount++;
+          return 'created';
         }
-      }
+      });
+
+      const results = await Promise.all(promises);
+      const createdCount = results.filter(r => r === 'created').length;
+      const updatedCount = results.filter(r => r === 'updated').length;
       
       await fetchData();
       const message = [
