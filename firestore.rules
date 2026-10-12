@@ -46,7 +46,7 @@ service cloud.firestore {
 
     // Contact messages: code uses 'contact_messages' collection
     match /contact_messages/{docId} {
-      allow create: if true;
+      allow create: if false;
       allow read, update, delete: if isAdmin();
     }
 

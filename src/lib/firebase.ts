@@ -3,6 +3,7 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { getMessaging } from "firebase/messaging";
+import { getFunctions } from "firebase/functions";
 
 // Firebase config is loaded from environment variables (see .env.local).
 // These keys are intentionally public — security is enforced via Firestore Security Rules.
@@ -22,6 +23,7 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const messaging = getMessaging(app);
+export const functions = getFunctions(app);
 
 // Public VAPID Key for FCM
 export const VAPID_KEY = "BKtE27i4SFqKpVymxWFHrPQud1q3lOpuOVKBsBgXdx8rDWnR5hUtzK5E0pDkwUjKwGDOKN3GFd63EW_fur4nKMI";

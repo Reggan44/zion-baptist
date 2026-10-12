@@ -2,8 +2,8 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, MessageSquare, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../lib/firebase';
 import { Button } from '../components/elements/Button';
 import { Input } from '../components/elements/Input';
 import { Label } from '../components/elements/Label';
@@ -56,10 +56,10 @@ const Contact = () => {
 
     setStatus('submitting');
     try {
-      await addDoc(collection(db, 'contact_messages'), {
+      const submitContactMessage = httpsCallable(functions, 'submitContactMessage');
+      await submitContactMessage({
         ...formData,
-        read: false,
-        createdAt: serverTimestamp()
+        recaptchaToken
       });
       
       setStatus('success');
