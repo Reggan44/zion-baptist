@@ -107,7 +107,7 @@ export const useNotifications = () => {
     }
   };
 
-  // Listen for foreground messages
+  /** Foreground push notification listener */
   useEffect(() => {
     if (!isSupported || permission !== 'granted') return;
 
