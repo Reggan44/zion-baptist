@@ -5,7 +5,7 @@ import { getSermonById, getSermons } from '../api/getSermons';
 import type { Sermon } from '../../../types';
 import { Calendar, ChevronLeft, Play, AlertCircle, Share2, Library, ArrowRight } from 'lucide-react';
 import { Button } from '../../../components/elements/Button';
-import { cn } from '../../../utils';
+import { cn } from '@/lib/utils';
 import SEO from '../../../components/seo/SEO';
 
 const getYouTubeEmbedUrl = (url: string) => {

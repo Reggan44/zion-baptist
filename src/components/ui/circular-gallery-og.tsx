@@ -11,7 +11,7 @@ import {
   type OGLRenderingContext,
 } from "ogl";
 import { useEffect, useRef } from "react";
-import { cn } from "@/utils/index"; 
+import { cn } from "@/lib/utils";
 
 /* --------------------------------
 * Types
