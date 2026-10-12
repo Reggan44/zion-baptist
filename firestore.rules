@@ -40,8 +40,11 @@ service cloud.firestore {
 
     // FCM Tokens: code uses 'fcm_tokens' collection
     match /fcm_tokens/{docId} {
-      allow read: if isAdmin();
-      allow write: if true;
+      allow read, delete: if isAdmin();
+      allow create, update: if request.resource.data.keys().hasOnly(['token', 'updatedAt', 'platform'])
+                            && request.resource.data.token == docId
+                            && request.resource.data.token is string
+                            && request.resource.data.platform == 'web';
     }
 
     // Contact messages: code uses 'contact_messages' collection
